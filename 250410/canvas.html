@@ -6,8 +6,45 @@
     <title>canvas</title>
 </head>
 <body>
-    <canvas id="mycanvas" width="600" height="400" style="">
-        
+    <canvas id="mycanvas" width="600" height="400">
+
     </canvas>
+    <script>
+        var ctx = document.getElementById("mycanvas");
+        var myContext = ctx.getContext("2d");
+
+        // myContext.strokeRect(0, 0, 600, 400);
+        // myContext.fillRect(0, 0, 600, 400);
+
+        // 선 그리기
+        myContext.beginPath();
+        myContext.moveTo(100, 20);
+        myContext.lineTo(40, 120);
+        myContext.lineTo(160, 120);
+        myContext.fill();
+
+        myContext.moveTo(300, 20);
+        myContext.lineTo(200, 60);
+        myContext.lineTo(200, 120);
+        myContext.lineTo(400, 120);
+        myContext.lineTo(400, 60);
+        myContext.closePath();
+        myContext.stroke();
+
+        // 원 그리기
+        myContext.beginPath();
+        myContext.arc(100, 75, 50, 0, Math.PI * 2, true); // 원
+
+
+        // 사각형 선만 그림
+        myContext.beginPath();
+        myContext.strokeStyle = "red";
+        myContext.strokeRect(200, 20, 100, 50);
+
+        // 사각형 내부 색칠
+        myContext.fillStyle = "blue";
+        myContext.fillRect(200, 20, 100, 50);
+
+    </script>
 </body>
 </html>
