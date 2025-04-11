@@ -1,12 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>audio</title>
-</head>
-<body>
-    <audio src="./SleepAway.mp3" type="audio/mp3" controls="controls" loop="loop"></audio>
-    
-</body>
+  </head>
+  <body>
+    <!-- <audio src="./SleepAway.mp3" type="audio/mp3" controls="controls" loop="loop"></audio> -->
+    <audio id="music" src="./SleepAway.mp3" type="audio/mp3"></audio>
+    <button onclick="playMusic()">재생</button>
+    <button onclick="pauseMusic()">일시정지</button>
+    <button onclick="stopMusic()">정지</button>
+    <div id="timeBar"></div>
+
+    <script>
+      var music = document.getElementById("music");
+      function playMusic() {
+        music.play();
+      }
+      function pauseMusic() {
+        music.pause();
+      }
+      function stopMusic() {
+        music.pause();
+        music.currentTime = 0;
+      }
+      music.addEventListener("timeupdate", function () {
+        document.getElementById("timeBar").innerHTML =
+          Math.floor(music.currentTime) +
+          " / " +
+          Math.floor(music.duration) +
+          "(초)";
+      });
+    </script>
+  </body>
 </html>

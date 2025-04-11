@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>position</title>
+  </head>
+  <body>
+    <button onclick="MyPosition()">현재위치</button><br />
+    <div id="result"></div>
+
+    <script>
+      function MyPosition() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            currentPosition,
+            errorCallback
+          );
+        }
+      }
+
+      function currentPosition(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        document.getElementById("result").innerHTML =
+          "위도 : " + lat + "경도 : " + lng;
+      }
+
+      function errorCallback(error) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            document.getElementById("result").innerHTML =
+              "현재 위치 정보에 대한 권한이 없습니다";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            document.getElementById("result").innerHTML =
+              "현재 위치 정보를 구할 수 없습니다";
+            break;
+
+          case error.TIMEOUT:
+            document.getElementById("result").innerHTML =
+              "시간 제한을 초과했습니다";
+            break;
+
+          default:
+            break;
+        }
+      }
+    </script>
+  </body>
+</html>
