@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DRAG</title>
+    <style>
+      #box1,
+      #box2,
+      #box3 {
+        width: 100px;
+        height: 100px;
+        background-color: lightgoldenrodyellow;
+        margin: 10px;
+        padding: 10px;
+      }
+      #box2 {
+        background-color: lightseagreen;
+      }
+      #box3 {
+        background-color: lightcoral;
+      }
+      #target {
+        width: 200px;
+        height: 200px;
+        background-color: lightslategrey;
+        margin: 10px;
+        padding: 10px;
+        border: 3px solid lightblue;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>draggable 속성 설정하기</h2>
+    <div id="box" ondrop="drop(event)" ondragover="dragOver(event)">
+      <div
+        id="box1"
+        draggable="true"
+        ondragstart="dragStart(event)"
+        ondrag="dragging(event)"
+        ondragend="dragEnd(event)"
+      ></div>
+      <div id="box2" draggable="false"></div>
+      <div id="box3" draggable="false"></div>
+    </div>
+
+    <div
+      id="target"
+      ondragenter="dragEnter(event)"
+      ondragover="dragOver(event)"
+      ondragleave="dragLeave(event)"
+      ondrop="ondrop(event)"
+    ></div>
+    <div id="result"></div>
+
+    <script>
+      function dragStart(event) {
+        document.getElementById("result").innerHTML = "드래그 시작";
+        event.dataTransfer.setData("Text", event.target.id);
+      }
+      function dragging(event) {
+        document.getElementById("result").innerHTML = "드래그 중";
+      }
+      function dragEnd(event) {
+        document.getElementById("result").innerHTML = "드래그 종료";
+      }
+      function dragEnter(event) {
+        document.getElementById("result").innerHTML = "target 영역에 진입";
+      }
+      function dragOver(event) {
+        document.getElementById("result").innerHTML =
+          "target 영역 위에서 드래그 중";
+      }
+      function dragLeave(event) {
+        document.getElementById("result").innerHTML = "target 영역에서 나감";
+      }
+      function drop(event) {
+        var id = event.target.getAttribute("id");
+        var data = event.dataTransfer.getData("Text");
+
+        e.target.appendChild(document.getElementById(data));
+
+        console.log(id);
+
+        if (id == "target") {
+          alert("드래그한 요소가 target 영역에 드롭되었습니다.");
+        } else {
+          alert("드래그한 요소가 원래 영역에 드롭되었습니다.");
+        }
+      }
+    </script>
+  </body>
+</html>

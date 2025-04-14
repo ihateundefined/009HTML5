@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>text drag & drop</title>
+    <style>
+      .draggable {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: lightslategray;
+        color: aliceblue;
+        cursor: pointer;
+      }
+      .dropArea {
+        width: 300px;
+        height: 300px;
+        border: 2px dashed lightseagreen;
+        margin-top: 20px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="draggable" draggable="true">드래그할 텍스트</div>
+    <div
+      class="dropArea"
+      ondrop="drop(event)"
+      ondragover="dragOver(event)"
+    ></div>
+
+    <script>
+      var draggable = document.querySelector(".draggable");
+      draggable.addEventListener("dragstart", dragstartHandler);
+
+      function dragstartHandler(e) {
+        e.dataTransfer.setData("text/plain", e.target.textContent);
+      }
+      function drop(e) {
+        e.preventDefault();
+        var dropText = e.dataTransfer.getData("text/plain");
+        e.target.textContent = dropText;
+      }
+      function dragOver(e) {
+        e.preventDefault();
+      }
+    </script>
+  </body>
+</html>
