@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>외부 이미지 드래그</title>
+    <style>
+      #dropArea {
+        width: 1024px;
+        height: 768px;
+        border: 5px solid lightcoral;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="dropArea"
+      ondragover="dragOver(event)"
+      ondrop="drop(event)"
+      ondragenter="dragEnter(event)"
+    ></div>
+
+    <script>
+      var dropArea = document.getElementById("dropArea");
+      var dropImage = document.createElement("img");
+
+      function dragEnter(e) {
+        e.preventDefault();
+      }
+      function dragOver(e) {
+        e.preventDefault();
+      }
+      function drop(e) {
+        var file = e.dataTransfer.files[0];
+        var reader = new FileReader();
+
+        reader.onload = (function (theFile) {
+          return function (e) {
+            alert("ondrop");
+            dropImage.src = e.target.result;
+            dropArea.appendChild(dropImage);
+          };
+        })(file);
+        reader.readAsDataURL(file);
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    </script>
+  </body>
+</html>
