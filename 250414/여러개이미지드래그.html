@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>여러개 이미지 드래그</title>
+    <style>
+      .droppable {
+        width: 100%;
+        height: 300px;
+        border: 2px dashed lightcoral;
+        display: flex;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="droppable" ondrop="drop(event)" ondragover="dragover(event)">
+      이 곳에 이미지 드롭
+    </div>
+    <!-- <div class="image-container"></div> -->
+
+    <script>
+      function dragover(e) {
+        e.preventDefault();
+      }
+      function drop(e) {
+        e.preventDefault();
+        var files = e.dataTransfer.files;
+        var droppable = document.querySelector(".droppable");
+
+        for (var file of files) {
+          // iterator
+          var reader = new FileReader();
+          var imageContainer = document.createElement("div");
+          imageContainer.className = "image-container";
+
+          const img = document.createElement("img");
+          reader.onload = function (e) {
+            img.src = e.target.result;
+          };
+          imageContainer.appendChild(img);
+          droppable.appendChild(imageContainer);
+          reader.readAsDataURL(file);
+        }
+      }
+    </script>
+  </body>
+</html>
