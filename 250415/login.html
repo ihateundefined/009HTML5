@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인 상태 관리</title>
+  </head>
+  <body>
+    <h1>로그인 상태 관리</h1>
+    <div id="loginForm">
+      <label>사용자 아이디 : </label>
+      <input type="text" id="userId" placeholder="아이디를 입력하세요" /><br />
+      <label>비밀번호 : </label>
+      <input
+        type="password"
+        id="userPassword"
+        placeholder="비밀번호를 입력하세요"
+      /><br />
+      <button id="loginButton">로그인</button>
+    </div>
+    <div id="welcome" style="display: none">
+      <p>환영합니다.<span id="loggedInUser"></span>!!!!!</p>
+      <button id="logoutButton">로그아웃</button>
+    </div>
+    <script>
+      var loginForm = document.getElementById("loginForm");
+      var userId = document.getElementById("userId");
+      var userPassword = document.getElementById("userPassword");
+      var loginButton = document.getElementById("loginButton");
+      var welcome = document.getElementById("welcome");
+      var loggedInUser = document.getElementById("loggedInUser");
+      var logoutButton = document.getElementById("logoutButton");
+
+      loginButton.addEventListener("click", function () {
+        var id = userId.value;
+        var pwd = userPassword.value;
+
+        if (id == "user" && pwd == "1111") {
+          localStorage.setItem("loggedInUser", id);
+          loginForm.style.display = "none";
+          welcome.style.display = "block";
+          loggedInUser.textContent = id;
+        } else {
+          alert("아이디 또는 비밀번호가 잘못되었습니다.");
+        }
+      });
+
+      logoutButton.addEventListener("click", function () {
+        localStorage.removeItem("loggedInUser");
+        loginForm.style.display = "block";
+        welcome.style.display = "none";
+        userId.value = "";
+        userPassword.value = "";
+      });
+
+      var storeUserId = localStorage.getItem("loggedInUser");
+      if (storeUserId) {
+        loginForm.style.display = "none";
+        welcome.style.display = "block";
+        loggedInUser.textContent = storeUserId;
+      }
+    </script>
+  </body>
+</html>
