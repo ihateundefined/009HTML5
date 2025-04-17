@@ -14,6 +14,259 @@
     </style>
   </head>
   <body>
-    <canvas id="seaCanvas" width="800" height="600"></canvas>
+    <canvas id="seaCanvas"></canvas>
+
+    <script>
+      // 캔버스 객체
+      var canvas;
+      var ctx;
+      var canvasBuffer;
+      var bufferCtx;
+      var threadSpeed = 16;
+
+      // 잠수함
+      var submarine;
+      var sx,
+        sy,
+        sw = 60,
+        sh = 35;
+
+      // 배경 이미지
+      var background;
+
+      // 장애물
+      var enemy = new Array();
+      var enemyColor = ["lightcoral", "lightyellow", "lightgreen"];
+      var ellapse = 10;
+
+      // 타이머
+      var loopInstance;
+
+      // 게임 상태
+      var STATE_START = false;
+      var STATE_GAMEOVER = false;
+
+      // 키 상태
+      var keyPressed = [];
+
+      // 경과 시간
+      var oldTime;
+      var startTime;
+      var totalTime;
+
+      // 이벤트
+      window.addEventListener("load", initialize, false);
+      window.addEventListener("keydown", getKeyDown, false);
+      window.addEventListener("keyup", getKeyUp, false);
+
+      function startMessage() {
+        drawText(
+          ctx,
+          "Press Enter to Start !",
+          seaCanvas.width / 2,
+          seaCanvas.height / 2 - 50,
+          "bold italic 30px Arial",
+          "lightgoldenrodyellow",
+          "center"
+        );
+
+        drawText(
+          ctx,
+          "조작 : 방향키 ← ↑ → ↓",
+          seaCanvas.width / 2,
+          seaCanvas.height / 2,
+          "bold italic 20px Arial",
+          "lightyellow",
+          "center"
+        );
+      }
+
+      function drawText(ctx, text, x, y, font, color, align) {
+        ctx.font = font;
+        ctx.fillStyle = color;
+        ctx.textAlign = align;
+        ctx.fillText(text, x, y);
+      }
+
+      function setImages() {
+        submarine = new Image();
+        submarine.src = "purple.png";
+
+        background = new Image();
+        background.src = "bg.png";
+
+        // 배경 이미지가 로드된 후 캔버스 크기 설정
+        background.onload = function () {
+          var seaCanvas = document.getElementById("seaCanvas");
+          seaCanvas.width = background.naturalWidth;
+          seaCanvas.height = background.naturalHeight;
+
+          // 캔버스 버퍼 크기 재설정
+          canvasBuffer.width = seaCanvas.width;
+          canvasBuffer.height = seaCanvas.height;
+
+          // 초기 화면 다시 그리기
+          startMessage();
+        };
+
+        submarine.onload = function () {
+          sw = 60; // 잠수함 너비
+          sh = 35; // 잠수함 높이
+        };
+      }
+
+      function createObstacles() {
+        enemy.length = 0;
+        for (var i = 0; i < 60; i++) {
+          enemy.push({
+            x: Math.random() * seaCanvas.width,
+            y: i < 60 / 2 ? 20 : seaCanvas.height - 20,
+            vx: Math.random() * 200 - 100,
+            vy: Math.random() * 200 - 100,
+            color: Math.floor(Math.random() * enemyColor.length),
+          });
+        }
+      }
+
+      function startGame() {
+        STATE_START = true;
+        sx = seaCanvas.width / 2 - 18;
+        sy = seaCanvas.height / 2 - 18;
+        sw = 60;
+        sh = 35;
+
+        // 장애물 생성
+        createObstacles();
+      }
+
+      // 장애물 그리기
+      function drawObstacles() {
+        for (var i = 0; i < 60; i++) {
+          ctx.beginPath();
+          ctx.arc(enemy[i].x, enemy[i].y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = enemyColor[enemy[i].color];
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      function drawAll() {
+        if (!STATE_START) {
+          return;
+        } else if (STATE_GAMEOVER) {
+          // 게임 종료 시
+          STATE_START = false;
+        } else {
+          // 게임 플레이
+          // 배경 이미지
+          bufferCtx.drawImage(background, 0, 0);
+
+          // 잠수함 캐릭터
+          bufferCtx.drawImage(submarine, sx, sy, sw, sh);
+          ctx.drawImage(canvasBuffer, 0, 0);
+
+          // 장애물 출력
+          drawObstacles();
+        }
+      }
+
+      function crashObstacles(index) {
+        var mx = enemy[index].x;
+        var my = enemy[index].y;
+
+        if (
+          mx > sx - sw / 2 &&
+          mx < sx + sw / 2 &&
+          my > sy - sh &&
+          my < sy + sh / 2
+        ) {
+          // 충돌 시
+          alert("충돌");
+        }
+      }
+
+      function moveObstacles() {
+        for (var i = 0; i < 60; i++) {
+          var mx = (enemy[i].vx * ellapse) / 1000;
+          var my = (enemy[i].vy * ellapse) / 1000;
+          enemy[i].x += mx;
+          enemy[i].y += my;
+
+          if (enemy[i].x > seaCanvas.width) {
+            enemy[i].x = 0;
+          }
+          if (enemy[i].x < 0) {
+            enemy[i].x = seaCanvas.width;
+          }
+          if (enemy[i].y > seaCanvas.height) {
+            enemy[i].y = 0;
+          }
+          if (enemy[i].y < 0) {
+            enemy[i].y = seaCanvas.height;
+          }
+
+          // 충돌 검사
+          crashObstacles(i);
+        }
+      }
+
+      // 주기적으로 반복되는 루틴
+      function update() {
+        if (keyPressed[13] == true && !STATE_START) {
+          // 게임 시작
+          startGame();
+        }
+
+        if (keyPressed[37] == true) {
+          sx -= 3;
+        } else if (keyPressed[38] == true) {
+          sy -= 3;
+        } else if (keyPressed[39] == true) {
+          sx += 3;
+        } else if (keyPressed[40] == true) {
+          sy += 3;
+        }
+
+        // 장애물 이동
+        moveObstacles();
+
+        // 그려줘
+        drawAll();
+      }
+
+      function getKeyDown(event) {
+        keyPressed[event.keyCode] = true;
+      }
+
+      function getKeyUp(event) {
+        keyPressed[event.keyCode] = false;
+      }
+
+      function initialize() {
+        // 화면 그리기 준비
+        canvas = document.getElementById("seaCanvas");
+
+        if (seaCanvas == null) {
+          return;
+        }
+
+        // 화면에 그림을 그려주는 역할
+        ctx = seaCanvas.getContext("2d");
+
+        canvasBuffer = document.createElement("canvas");
+        canvasBuffer.width = seaCanvas.width;
+        canvasBuffer.height = seaCanvas.height;
+        bufferCtx = canvasBuffer.getContext("2d");
+
+        // 게임 시작 메세지
+        startMessage();
+
+        // 이미지 설정
+        setImages();
+
+        // 반복 동작 설정
+        loopInstance = setInterval(update, threadSpeed);
+      }
+    </script>
   </body>
 </html>
